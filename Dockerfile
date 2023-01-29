@@ -6,6 +6,8 @@ RUN rustup component add clippy
 
 RUN cargo install --locked trunk
 
+RUN cargo install --locked cargo-about
+
 WORKDIR /usr/src/temp-log-ui
 
 COPY . .
@@ -15,6 +17,8 @@ RUN trunk build --release
 RUN cargo clippy
 
 RUN cargo test --verbose
+
+RUN cargo about generate about.hbs > license.html
 
 FROM nginx:1.23.3
 
