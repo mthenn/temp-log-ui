@@ -1,0 +1,9 @@
+dist
+target
+Dockerfile
+.git
+.gitignore
+.github
+.vscode
+README.md
+LICENSE
