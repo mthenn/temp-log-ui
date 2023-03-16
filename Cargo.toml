@@ -7,3 +7,9 @@ edition = "2021"
 
 [dependencies]
 yew = { version = "0.20.0", features = ["csr"] }
+yew-chart = "0.6.0"
+chrono = "0.4.23"
+
+# Patching yew chart until yew 0.20 is officially supported
+[patch.crates-io]
+yew-chart = { git = 'https://github.com/mthenn/yew-chart', branch = 'update-yew-version' }
