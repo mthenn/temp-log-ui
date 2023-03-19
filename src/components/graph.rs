@@ -1,10 +1,7 @@
-use std::{
-    ops::{Add, Sub},
-    rc::Rc,
-};
+use std::{ops::Add, rc::Rc};
 
-use chrono::{Duration, Utc};
-use yew::{function_component, html, Html};
+use chrono::{DateTime, Duration, Utc};
+use yew::{function_component, html, Html, Properties};
 use yew_chart::{
     axis::{Axis, Orientation, Scale},
     linear_axis_scale::LinearScale,
@@ -17,10 +14,16 @@ const HEIGHT: f32 = 200.0;
 const MARGIN: f32 = 50.0;
 const TICK_LENGTH: f32 = 10.0;
 
+#[derive(Properties, PartialEq)]
+pub struct GraphProps {
+    pub from_date: DateTime<Utc>,
+    pub to_date: DateTime<Utc>,
+}
+
 #[function_component(Graph)]
-pub fn graph() -> Html {
-    let end_date = Utc::now();
-    let start_date = end_date.sub(Duration::days(4));
+pub fn graph(props: &GraphProps) -> Html {
+    let end_date = props.from_date;
+    let start_date = props.to_date;
     let timespan = start_date..end_date;
 
     let humidity_data_set = Rc::new(vec![
