@@ -1,5 +1,6 @@
 use std::{ops::Add, rc::Rc};
 
+use crate::hooks::;
 use chrono::{DateTime, Duration, Utc};
 use yew::{function_component, html, Html, Properties};
 use yew_chart::{
@@ -22,6 +23,8 @@ pub struct GraphProps {
 
 #[function_component(Graph)]
 pub fn graph(props: &GraphProps) -> Html {
+    let data = use_temp_data();
+
     let end_date = props.from_date;
     let start_date = props.to_date;
     let timespan = start_date..end_date;
