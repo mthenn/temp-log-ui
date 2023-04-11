@@ -1,28 +1,22 @@
 use chrono::{DateTime, Utc};
+use reqwest::Error;
 
 use super::templog_dto::Measurement;
 
 pub async fn get_measurements(
     begin_timestamp: DateTime<Utc>,
     end_timestamp: DateTime<Utc>,
-) -> Result<Vec<Measurement>, ()> {
-    let client = reqwest::Client::builder()
-        .build()
-        .expect("Got error during REST client creation.");
+) -> Result<Vec<Measurement>, Error> {
+    let client = reqwest::Client::builder().build()?;
 
     let response = client
         .get("templog/measurements")
         .query(&("date_from", begin_timestamp))
         .query(&("date_to", end_timestamp))
         .send()
-        .await
-        .expect("Get measurements failed.");
+        .await?
+        .json::<Vec<Measurement>>()
+        .await?;
 
-    if !response.status().is_success() {
-        panic!(
-            "The request was not successful! Status code: {}",
-            response.status()
-        );
-    }
-    println!("Sent reading to backend.");
+    Ok(response)
 }
