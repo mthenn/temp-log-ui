@@ -1,20 +1,29 @@
-use yew::prelude::*;
+pub mod api;
+pub mod components;
+pub mod hooks;
+
+use std::ops::Sub;
+
+use chrono::{Duration, Utc};
+use yew::{prelude::*, props};
+
+use crate::components::graph::Graph;
+use crate::components::graph::GraphProps;
 
 #[function_component]
 fn App() -> Html {
-    let counter = use_state(|| 0);
-    let onclick = {
-        let counter = counter.clone();
-        move |_| {
-            let value = *counter + 1;
-            counter.set(value);
+    let from_date = { Utc::now() };
+    let graph_props = props! {
+        GraphProps {
+            from_date: from_date,
+            to_date: from_date.sub(Duration::days(4))
         }
     };
-
     html! {
         <div>
-            <button {onclick}>{ "+1" }</button>
-            <p>{ *counter }</p>
+            <Graph
+                ..graph_props
+            />
         </div>
     }
 }
