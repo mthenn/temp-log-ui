@@ -1,5 +1,9 @@
 accepted = [
     "Apache-2.0",
     "MIT",
-    "Unicode-DFS-2016"
+    "Unicode-DFS-2016",
+    "ISC",
+    "MPL-2.0",
+    "BSD-3-Clause",
+    "OpenSSL"
 ]
