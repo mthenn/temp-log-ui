@@ -1,14 +1,18 @@
-use std::{ops::Add, rc::Rc};
+use std::rc::Rc;
 
-use crate::hooks::;
 use chrono::{DateTime, Duration, Utc};
-use yew::{function_component, html, Html, Properties};
+use yew::{
+    function_component, html, platform::spawn_local, use_effect, use_state, Html, Properties,
+    UseStateHandle,
+};
 use yew_chart::{
     axis::{Axis, Orientation, Scale},
     linear_axis_scale::LinearScale,
-    series::{self, Series, Tooltipper, Type},
+    series::{self, Labeller, Series, Tooltipper, Type},
     time_axis_scale::TimeScale,
 };
+
+use crate::api::templog_measurements::get_measurements;
 
 const WIDTH: f32 = 400.0;
 const HEIGHT: f32 = 200.0;
@@ -23,59 +27,51 @@ pub struct GraphProps {
 
 #[function_component(Graph)]
 pub fn graph(props: &GraphProps) -> Html {
-    let data = use_temp_data();
-
-    let end_date = props.from_date;
     let start_date = props.to_date;
+    let end_date = props.from_date;
     let timespan = start_date..end_date;
+    let humidity_data_set: UseStateHandle<Rc<Vec<(i64, f32, Option<Rc<dyn Labeller>>)>>> =
+        use_state(|| Rc::new(vec![]));
+    let temperature_data_set: UseStateHandle<Rc<Vec<(i64, f32, Option<Rc<dyn Labeller>>)>>> =
+        use_state(|| Rc::new(vec![]));
 
-    let humidity_data_set = Rc::new(vec![
-        (start_date.timestamp_millis(), 42.0, None),
-        (
-            start_date.add(Duration::days(1)).timestamp_millis(),
-            65.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(2)).timestamp_millis(),
-            40.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(3)).timestamp_millis(),
-            80.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(4)).timestamp_millis(),
-            60.0,
-            None,
-        ),
-    ]);
+    {
+        let humidity_data_set = humidity_data_set.clone();
+        let temperature_data_set = temperature_data_set.clone();
+        use_effect(move || {
+            let humidity_data_set = humidity_data_set.clone();
+            let temperature_data_set = temperature_data_set.clone();
+            spawn_local(async move {
+                let result = get_measurements(start_date, end_date).await;
+                match result {
+                    Ok(data) => {
+                        let humidity_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                            .iter()
+                            .map(|measurement| {
+                                let time = &measurement.timestamp;
+                                let humidity = &measurement.humidity;
+                                (time.timestamp_millis(), *humidity as f32, None)
+                            })
+                            .collect();
+                        humidity_data_set.set(Rc::new(humidity_data));
 
-    let temperature_data_set = Rc::new(vec![
-        (start_date.timestamp_millis(), 14.0, None),
-        (
-            start_date.add(Duration::days(1)).timestamp_millis(),
-            12.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(2)).timestamp_millis(),
-            22.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(3)).timestamp_millis(),
-            15.0,
-            None,
-        ),
-        (
-            start_date.add(Duration::days(4)).timestamp_millis(),
-            18.0,
-            None,
-        ),
-    ]);
+                        let temperature_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                            .iter()
+                            .map(|measurement| {
+                                let time = measurement.timestamp;
+                                let temperature = measurement.temperature;
+                                (time.timestamp_millis(), temperature as f32, None)
+                            })
+                            .collect();
+                        temperature_data_set.set(Rc::new(temperature_data));
+                    }
+                    Err(error) => {
+                        log::error!("Request failed: {}.", error);
+                    }
+                }
+            });
+        });
+    }
 
     let time_scale =
         Rc::new(TimeScale::new(timespan, Duration::days(1))) as Rc<dyn Scale<Scalar = _>>;
@@ -90,7 +86,7 @@ pub fn graph(props: &GraphProps) -> Html {
                 <Series<i64, f32>
                     series_type={Type::Line}
                     name="temperature-graph"
-                    data={temperature_data_set}
+                    data={Rc::clone(&temperature_data_set)}
                     horizontal_scale={Rc::clone(&time_scale)}
                     horizontal_scale_step={Duration::days(2).num_milliseconds()}
                     tooltipper={Rc::clone(&tooltip)}
@@ -101,7 +97,7 @@ pub fn graph(props: &GraphProps) -> Html {
                 <Series<i64, f32>
                     series_type={Type::Line}
                     name="humidity-graph"
-                    data={humidity_data_set}
+                    data={Rc::clone(&humidity_data_set)}
                     horizontal_scale={Rc::clone(&time_scale)}
                     horizontal_scale_step={Duration::days(2).num_milliseconds()}
                     tooltipper={Rc::clone(&tooltip)}
