@@ -8,6 +8,11 @@ accepted = [
     "OpenSSL"
 ]
 
+workarounds = [
+    "ring",
+    "rustls",
+]
+
 [webpki.clarify]
 license = "ISC"
 
