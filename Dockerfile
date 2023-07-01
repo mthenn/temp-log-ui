@@ -1,4 +1,4 @@
-FROM rust:1.68.1 as build
+FROM rust:1.69.0 as build
 
 RUN rustup target add wasm32-unknown-unknown
 
@@ -20,7 +20,7 @@ RUN cargo test --verbose
 
 RUN cargo about generate about.hbs > license.html
 
-FROM nginx:1.23.3
+FROM nginx:1.25.1
 
 WORKDIR /usr/share/nginx/html
 

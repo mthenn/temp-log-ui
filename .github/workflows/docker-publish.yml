@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v3.5.2
 
       # Setup docker driver to utilize cache (see https://docs.docker.com/build/cache/backends/gha/)
       - run: docker buildx create --use --driver=docker-container
@@ -46,7 +46,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v4.3.0
+        uses: docker/metadata-action@v4.4.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
