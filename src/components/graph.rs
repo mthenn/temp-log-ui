@@ -36,33 +36,41 @@ pub fn graph(props: &GraphProps) -> Html {
         use_state(|| Rc::new(vec![]));
 
     {
+        log::info!("Entering graph...");
         let humidity_data_set = humidity_data_set.clone();
         let temperature_data_set = temperature_data_set.clone();
         use_effect(move || {
+            log::info!("Entering useEffect...");
             let humidity_data_set = humidity_data_set.clone();
             let temperature_data_set = temperature_data_set.clone();
             spawn_local(async move {
+                log::info!("Entering spawnLocal...");
                 let result = get_measurements(start_date, end_date).await;
-                if let Ok(data) = result {
-                    let humidity_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
-                        .iter()
-                        .map(|measurement| {
-                            let time = &measurement.timestamp;
-                            let humidity = &measurement.humidity;
-                            (time.timestamp_millis(), *humidity as f32, None)
-                        })
-                        .collect();
-                    humidity_data_set.set(Rc::new(humidity_data));
+                match result {
+                    Ok(data) => {
+                        let humidity_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                            .iter()
+                            .map(|measurement| {
+                                let time = &measurement.timestamp;
+                                let humidity = &measurement.humidity;
+                                (time.timestamp_millis(), *humidity as f32, None)
+                            })
+                            .collect();
+                        humidity_data_set.set(Rc::new(humidity_data));
 
-                    let temperature_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
-                        .iter()
-                        .map(|measurement| {
-                            let time = measurement.timestamp;
-                            let temperature = measurement.temperature;
-                            (time.timestamp_millis(), temperature as f32, None)
-                        })
-                        .collect();
-                    temperature_data_set.set(Rc::new(temperature_data));
+                        let temperature_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                            .iter()
+                            .map(|measurement| {
+                                let time = measurement.timestamp;
+                                let temperature = measurement.temperature;
+                                (time.timestamp_millis(), temperature as f32, None)
+                            })
+                            .collect();
+                        temperature_data_set.set(Rc::new(temperature_data));
+                    }
+                    Err(error) => {
+                        log::error!("Request failed: {}.", error);
+                    }
                 }
             });
         });
