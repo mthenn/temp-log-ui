@@ -25,15 +25,15 @@ pub struct GraphProps {
     pub to_date: DateTime<Utc>,
 }
 
+type GraphEntry = (i64, f32, Option<Rc<dyn Labeller>>);
+
 #[function_component(Graph)]
 pub fn graph(props: &GraphProps) -> Html {
     let start_date = props.to_date;
     let end_date = props.from_date;
     let timespan = start_date..end_date;
-    let humidity_data_set: UseStateHandle<Rc<Vec<(i64, f32, Option<Rc<dyn Labeller>>)>>> =
-        use_state(|| Rc::new(vec![]));
-    let temperature_data_set: UseStateHandle<Rc<Vec<(i64, f32, Option<Rc<dyn Labeller>>)>>> =
-        use_state(|| Rc::new(vec![]));
+    let humidity_data_set: UseStateHandle<Rc<Vec<GraphEntry>>> = use_state(|| Rc::new(vec![]));
+    let temperature_data_set: UseStateHandle<Rc<Vec<GraphEntry>>> = use_state(|| Rc::new(vec![]));
 
     {
         let humidity_data_set = humidity_data_set.clone();
@@ -45,7 +45,7 @@ pub fn graph(props: &GraphProps) -> Html {
                 let result = get_measurements(start_date, end_date).await;
                 match result {
                     Ok(data) => {
-                        let humidity_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                        let humidity_data: Vec<GraphEntry> = data
                             .iter()
                             .map(|measurement| {
                                 let time = &measurement.timestamp;
@@ -55,7 +55,7 @@ pub fn graph(props: &GraphProps) -> Html {
                             .collect();
                         humidity_data_set.set(Rc::new(humidity_data));
 
-                        let temperature_data: Vec<(i64, f32, Option<Rc<dyn Labeller>>)> = data
+                        let temperature_data: Vec<GraphEntry> = data
                             .iter()
                             .map(|measurement| {
                                 let time = measurement.timestamp;

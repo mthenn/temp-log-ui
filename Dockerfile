@@ -12,6 +12,8 @@ WORKDIR /usr/src/temp-log-ui
 
 COPY . .
 
+ARG BACKEND_BASE_URL
+
 RUN trunk build --release
 
 RUN cargo clippy
