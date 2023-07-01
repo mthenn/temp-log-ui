@@ -36,15 +36,12 @@ pub fn graph(props: &GraphProps) -> Html {
         use_state(|| Rc::new(vec![]));
 
     {
-        log::info!("Entering graph...");
         let humidity_data_set = humidity_data_set.clone();
         let temperature_data_set = temperature_data_set.clone();
         use_effect(move || {
-            log::info!("Entering useEffect...");
             let humidity_data_set = humidity_data_set.clone();
             let temperature_data_set = temperature_data_set.clone();
             spawn_local(async move {
-                log::info!("Entering spawnLocal...");
                 let result = get_measurements(start_date, end_date).await;
                 match result {
                     Ok(data) => {
