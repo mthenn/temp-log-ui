@@ -19,7 +19,7 @@ pub async fn get_measurements(
     };
 
     let response = client
-        .get(base_url + "/templog/measurements")
+        .get(base_url + "/api/measurements")
         .query(&[("date_from", begin_timestamp), ("date_to", end_timestamp)])
         .send()
         .await?
