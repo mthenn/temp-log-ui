@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use chrono::{DateTime, Duration, Utc};
 use yew::{
-    function_component, html, platform::spawn_local, use_effect, use_state, Html, Properties,
-    UseStateHandle,
+    function_component, html, platform::spawn_local, use_effect, use_effect_with_deps, use_state,
+    Html, Properties, UseStateHandle,
 };
 use yew_chart::{
     axis::{Axis, Orientation, Scale},
@@ -38,39 +38,42 @@ pub fn graph(props: &GraphProps) -> Html {
     {
         let humidity_data_set = humidity_data_set.clone();
         let temperature_data_set = temperature_data_set.clone();
-        use_effect(move || {
-            let humidity_data_set = humidity_data_set.clone();
-            let temperature_data_set = temperature_data_set.clone();
-            spawn_local(async move {
-                let result = get_measurements(start_date, end_date).await;
-                match result {
-                    Ok(data) => {
-                        let humidity_data: Vec<GraphEntry> = data
-                            .iter()
-                            .map(|measurement| {
-                                let time = &measurement.timestamp;
-                                let humidity = &measurement.humidity;
-                                (time.timestamp_millis(), *humidity as f32, None)
-                            })
-                            .collect();
-                        humidity_data_set.set(Rc::new(humidity_data));
+        use_effect_with_deps(
+            move |_| {
+                let humidity_data_set = humidity_data_set.clone();
+                let temperature_data_set = temperature_data_set.clone();
+                spawn_local(async move {
+                    let result = get_measurements(start_date, end_date).await;
+                    match result {
+                        Ok(data) => {
+                            let humidity_data: Vec<GraphEntry> = data
+                                .iter()
+                                .map(|measurement| {
+                                    let time = &measurement.timestamp;
+                                    let humidity = &measurement.humidity;
+                                    (time.timestamp_millis(), *humidity as f32, None)
+                                })
+                                .collect();
+                            humidity_data_set.set(Rc::new(humidity_data));
 
-                        let temperature_data: Vec<GraphEntry> = data
-                            .iter()
-                            .map(|measurement| {
-                                let time = measurement.timestamp;
-                                let temperature = measurement.temperature;
-                                (time.timestamp_millis(), temperature as f32, None)
-                            })
-                            .collect();
-                        temperature_data_set.set(Rc::new(temperature_data));
+                            let temperature_data: Vec<GraphEntry> = data
+                                .iter()
+                                .map(|measurement| {
+                                    let time = measurement.timestamp;
+                                    let temperature = measurement.temperature;
+                                    (time.timestamp_millis(), temperature as f32, None)
+                                })
+                                .collect();
+                            temperature_data_set.set(Rc::new(temperature_data));
+                        }
+                        Err(error) => {
+                            log::error!("Request failed: {}.", error);
+                        }
                     }
-                    Err(error) => {
-                        log::error!("Request failed: {}.", error);
-                    }
-                }
-            });
-        });
+                });
+            },
+            (),
+        );
     }
 
     let time_scale =
