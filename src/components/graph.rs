@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use chrono::{DateTime, Duration, Utc};
 use yew::{
-    function_component, html, platform::spawn_local, use_effect, use_effect_with_deps, use_state,
-    Html, Properties, UseStateHandle,
+    function_component, html, platform::spawn_local, use_effect_with_deps, use_state, Html,
+    Properties, UseStateHandle,
 };
 use yew_chart::{
     axis::{Axis, Orientation, Scale},
