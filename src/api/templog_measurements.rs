@@ -14,7 +14,7 @@ pub async fn get_measurements(
         Some(value) => value.to_string(),
         None => {
             log::warn!("No backend url has been set, application will not work.");
-            "".to_string()
+            "".to_string() // No error is thrown, to allow compilaiton without variable being set
         }
     };
 
