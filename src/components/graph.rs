@@ -145,7 +145,7 @@ fn update_data(
     humidity_scale: UseStateHandle<Rc<dyn Scale<Scalar = f32>>>,
     temperature_data_set: UseStateHandle<Rc<Vec<GraphEntry>>>,
     temperature_scale: UseStateHandle<Rc<dyn Scale<Scalar = f32>>>,
-) -> () {
+) {
     // Update humidity data
     {
         let mut low = None;
