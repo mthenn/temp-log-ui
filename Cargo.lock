@@ -771,15 +771,6 @@ dependencies = [
 
 [[package]]
 name = "implicit-clone"
-version = "0.3.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c6ecbd987bb94f1f3c76c6787879756cf4b6f73bfff48d79308e8c56b46f65f"
-dependencies = [
- "indexmap 1.9.3",
-]
-
-[[package]]
-name = "implicit-clone"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a50fed6f6aa778e7946f697a88e474b4b4a83fb0849cec1ac65fa8e869319dd"
@@ -953,16 +944,6 @@ dependencies = [
  "futures",
  "rustversion",
  "thiserror",
-]
-
-[[package]]
-name = "prettyplease"
-version = "0.1.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c8646e95016a7a6c4adea95bafa8a16baab64b583356217f2c85db4a39d9a86"
-dependencies = [
- "proc-macro2",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -1264,7 +1245,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
 dependencies = [
  "proc-macro2",
- "quote",
  "unicode-ident",
 ]
 
@@ -1309,7 +1289,7 @@ dependencies = [
  "reqwest",
  "serde",
  "wasm-logger",
- "yew 0.21.0",
+ "yew",
  "yew-chart",
 ]
 
@@ -1728,31 +1708,6 @@ dependencies = [
 
 [[package]]
 name = "yew"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dbecfe44343b70cc2932c3eb445425969ae21754a8ab3a0966981c1cf7af1cc"
-dependencies = [
- "console_error_panic_hook",
- "futures",
- "gloo 0.8.1",
- "implicit-clone 0.3.6",
- "indexmap 1.9.3",
- "js-sys",
- "prokio",
- "rustversion",
- "serde",
- "slab",
- "thiserror",
- "tokio",
- "tracing",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "yew-macro 0.20.0",
-]
-
-[[package]]
-name = "yew"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f1a03f255c70c7aa3e9c62e15292f142ede0564123543c1cc0c7a4f31660cac"
@@ -1760,7 +1715,7 @@ dependencies = [
  "console_error_panic_hook",
  "futures",
  "gloo 0.10.0",
- "implicit-clone 0.4.6",
+ "implicit-clone",
  "indexmap 2.1.0",
  "js-sys",
  "prokio",
@@ -1773,35 +1728,20 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "yew-macro 0.21.0",
+ "yew-macro",
 ]
 
 [[package]]
 name = "yew-chart"
 version = "0.6.0"
-source = "git+https://github.com/mthenn/yew-chart?branch=update-yew-version#19b096c66d0fe1685ed7aa71880e474a03c9973c"
+source = "git+https://github.com/mthenn/yew-chart?branch=update-yew-version#f9c6c7ed698c84fe557b6a4f57e2b5be1b09614b"
 dependencies = [
  "chrono",
  "gloo-events 0.1.2",
  "gloo-utils 0.1.7",
  "wasm-bindgen",
  "web-sys",
- "yew 0.20.0",
-]
-
-[[package]]
-name = "yew-macro"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b64c253c1d401f1ea868ca9988db63958cfa15a69f739101f338d6f05eea8301"
-dependencies = [
- "boolinator",
- "once_cell",
- "prettyplease 0.1.25",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
+ "yew",
 ]
 
 [[package]]
@@ -1812,7 +1752,7 @@ checksum = "02fd8ca5166d69e59f796500a2ce432ff751edecbbb308ca59fd3fe4d0343de2"
 dependencies = [
  "boolinator",
  "once_cell",
- "prettyplease 0.2.15",
+ "prettyplease",
  "proc-macro-error",
  "proc-macro2",
  "quote",

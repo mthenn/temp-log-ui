@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use chrono::{DateTime, Duration, Utc};
 use yew::{
-    function_component, html, platform::spawn_local, use_effect_with_deps, use_state, Html,
-    Properties, UseStateHandle,
+    function_component, html, platform::spawn_local, use_effect_with, use_state, Html, Properties,
+    UseStateHandle,
 };
 use yew_chart::{
     axis::{Axis, Orientation, Scale},
@@ -58,30 +58,27 @@ pub fn graph(props: &GraphProps) -> Html {
         let humidity_scale = humidity_scale.clone();
         let temperature_data_set = temperature_data_set.clone();
         let temperature_scale = temperature_scale.clone();
-        use_effect_with_deps(
-            move |_| {
-                let humidity_data_set = humidity_data_set.clone();
-                let humidity_scale = humidity_scale.clone();
-                let temperature_data_set = temperature_data_set.clone();
-                let temperature_scale = temperature_scale.clone();
-                spawn_local(async move {
-                    let result = get_measurements(start_date, end_date).await;
-                    match result {
-                        Ok(data) => update_data(
-                            data,
-                            humidity_data_set,
-                            humidity_scale,
-                            temperature_data_set,
-                            temperature_scale,
-                        ),
-                        Err(error) => {
-                            log::error!("Request failed: {}.", error);
-                        }
+        use_effect_with((), move |_| {
+            let humidity_data_set = humidity_data_set.clone();
+            let humidity_scale = humidity_scale.clone();
+            let temperature_data_set = temperature_data_set.clone();
+            let temperature_scale = temperature_scale.clone();
+            spawn_local(async move {
+                let result = get_measurements(start_date, end_date).await;
+                match result {
+                    Ok(data) => update_data(
+                        data,
+                        humidity_data_set,
+                        humidity_scale,
+                        temperature_data_set,
+                        temperature_scale,
+                    ),
+                    Err(error) => {
+                        log::error!("Request failed: {}.", error);
                     }
-                });
-            },
-            (),
-        );
+                }
+            });
+        });
     }
 
     let time_scale: Rc<dyn Scale<Scalar = _>> =
