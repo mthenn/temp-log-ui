@@ -9,7 +9,7 @@ edition = "2021"
 yew = { version = "0.21.0", features = ["csr"] }
 yew-chart = "0.6.0"
 chrono = { version = "0.4.31", features = ["serde"] }
-serde = { version = "1.0.190", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
 reqwest = { version = "0.11.22", features = ["json", "rustls-tls"], default-features = false }
 wasm-logger = "0.2.0"
 log = "0.4.20"
