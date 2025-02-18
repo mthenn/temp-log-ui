@@ -1,8 +1,11 @@
-FROM rust:1.84.1 as build
+FROM rust:1.84.1 AS build
 
 RUN rustup target add wasm32-unknown-unknown
 
 RUN rustup component add clippy
+
+# This is required for Apple Silicon (see https://trunkrs.dev/)
+RUN cargo install --locked wasm-bindgen-cli
 
 RUN cargo install --locked trunk
 
