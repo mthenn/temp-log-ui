@@ -4,6 +4,9 @@ RUN rustup target add wasm32-unknown-unknown
 
 RUN rustup component add clippy
 
+# This is required for wasm
+RUN apt-get update && apt-get install -y binaryen
+
 # This is required for Apple Silicon (see https://trunkrs.dev/)
 RUN cargo install --locked wasm-bindgen-cli
 
