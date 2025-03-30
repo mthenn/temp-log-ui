@@ -10,3 +10,4 @@ dist
 
 # cargo-about output
 license.html
+.DS_Store

@@ -1,8 +1,11 @@
-FROM rust:1.84.1 AS build
+FROM rust:1.85.1 AS build
 
 RUN rustup target add wasm32-unknown-unknown
 
 RUN rustup component add clippy
+
+# This is required for wasm
+RUN apt-get update && apt-get install -y binaryen
 
 # This is required for Apple Silicon (see https://trunkrs.dev/)
 RUN cargo install --locked wasm-bindgen-cli
@@ -25,7 +28,7 @@ RUN cargo test --verbose
 
 RUN cargo about generate about.hbs > license.html
 
-FROM nginx:1.25.3
+FROM nginx:1.27.4
 
 WORKDIR /usr/share/nginx/html
 
