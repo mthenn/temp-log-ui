@@ -28,7 +28,7 @@ RUN cargo test --verbose
 
 RUN cargo about generate about.hbs > license.html
 
-FROM nginx:1.27.4
+FROM nginx:1.29.7
 
 WORKDIR /usr/share/nginx/html
 
