@@ -24,7 +24,7 @@ RUN trunk build --release
 
 RUN cargo clippy
 
-RUN cargo test --verbose
+RUN cargo test
 
 RUN cargo about generate about.hbs > license.html
 
